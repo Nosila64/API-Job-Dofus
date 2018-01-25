@@ -1,0 +1,20 @@
+{
+  "name": "api-job",
+  "version": "1.0.0",
+  "description": "Api for my awesome angular project !",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nosila64/API-Job-Dofus.git"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Nosila",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "mysql": "^2.15.0"
+  }
+}

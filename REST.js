@@ -11,7 +11,7 @@ REST_ROUTER.prototype.handleRoutes = function(router, connection) {
     router.get('/', function(req,res) {
         res.json({"Message" : "GG POTO"});
     });
-
+//TODO:: CHANGE ADDRESS FOR :IdX
     router.post('/perso', function(req,res) {
         var query = "INSERT INTO ??(??) VALUES(?)";
         var table = ["personnage","nompersonnage",req.body.nomPersonnage];
@@ -24,7 +24,7 @@ REST_ROUTER.prototype.handleRoutes = function(router, connection) {
             }
             else
             {
-                res.json({"error":"false","message":"personnage ajouté !"});
+                res.json({"error":"false","message":"personnage ajouté !","idPersonnage":rows.insertId});
             }
         })
     });
@@ -43,9 +43,26 @@ REST_ROUTER.prototype.handleRoutes = function(router, connection) {
             }
         });
     });
+
+    router.get('/metier/:idPersonnage', function(req,res) {
+        var query = "Select * FROM ?? where ?? = ?";
+        var table = ["personnage","idPersonnage",req.params.idPersonnage];
+        query = mysql.format(query,table);
+        connection.query(query, function(err, rows) {
+            if(err)
+            {
+                res.json({"error":"true","message":err});
+            }
+            else
+            {
+                res.json({"Personnage":rows[0]});
+            }
+        });
+    });
+
     router.post('/job', function(req,res) {
         var query = "INSERT INTO ??(??) VALUES(?)";
-        var table = ["metier","nommetier",req.body.nomMetier];
+        var table = ["metier","nomMetier",req.body.nomMetier];
         query = mysql.format(query,table);
         connection.query(query, function(err,rows)
         {
@@ -55,11 +72,11 @@ REST_ROUTER.prototype.handleRoutes = function(router, connection) {
             }
             else
             {
-                res.json({"error":"false","message":"Job ajouté !"});
+                res.json({"message":"Job ajouté !","idMetier":rows.insertId});
             }
         })
     });
-    router.get('/job', function(req,res) {
+    router.get('/jobs', function(req,res) {
         var query = "SELECT * FROM ??";
         var table = ["metier"];
         query = mysql.format(query,table);
@@ -75,10 +92,11 @@ REST_ROUTER.prototype.handleRoutes = function(router, connection) {
         });
     });
     router.post('/recipe', function(req,res) {
-        var query = "INSERT INTO ??(??,??,??) VALUES(?,?,?)";
+        var query = "INSERT INTO ??(??,??,??) VALUES(?,?,?);";
         var table = ["recette","idmetier","nomrecette","niveaurecette",req.body.idMetier,req.body.nomRecette, req.body.niveauRecette];
         query = mysql.format(query,table);
-        connection.query(query, function(err,rows)
+        console.log(query);
+        connection.query(query, [1,2], function(err,rows)
         {
             if(err)
             {
@@ -86,7 +104,7 @@ REST_ROUTER.prototype.handleRoutes = function(router, connection) {
             }
             else
             {
-                res.json({"error":"false","message":"Recette ajouté !"});
+                res.json({"error":"false","message":"Recette ajouté !","idRecette":rows.insertId});
             }
         })
     });
@@ -105,7 +123,37 @@ REST_ROUTER.prototype.handleRoutes = function(router, connection) {
             }
         });
     });
-    router.post('/ingredients', function(req,res) {
+    router.get('/job/:idMetier', function(req,res) {
+        var query = "SELECT * FROM ?? WHERE ?? = ?";
+        var table = ["metier","idMetier",req.params.idMetier];
+        query = mysql.format(query,table);
+        connection.query(query, function(err, rows) {
+            if(err)
+            {
+                res.json({"error":"true","message":err});
+            }
+            else
+            {
+                res.json({"message":"success", "Metier": rows[0]});
+            }
+        });
+    });
+    router.get('/recipe/:idRecette', function(req, res) {
+        var query = "select * from ?? WHERE ?? = ?";
+        var table = ['recette','idrecette',req.params.idRecette];
+        query = mysql.format(query,table);
+        connection.query(query, function(err, rows) {
+            if(err)
+            {
+                res.json({"error":"true","message":err});
+            }
+            else
+            {
+                res.json({"message":"success", "Recette": rows[0]});
+            }
+        });
+    });
+    router.post('/ingredient', function(req,res) {
         var query = "INSERT INTO ??(??) VALUES(?)";
         var table = ["ingredient","nomingredient",req.body.nomIngredient];
         query = mysql.format(query,table);
@@ -167,6 +215,5 @@ REST_ROUTER.prototype.handleRoutes = function(router, connection) {
             }
         });
     });
-
 };
 module.exports = REST_ROUTER;
